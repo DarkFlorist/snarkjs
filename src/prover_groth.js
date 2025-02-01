@@ -34,7 +34,6 @@ module.exports = function genProof(vk_proof, witness) {
 
     const r = PolF.F.random();
     const s = PolF.F.random();
-
 /* Uncomment to generate a deterministic proof to debug
     const r = PolF.F.zero;
     const s = PolF.F.zero;

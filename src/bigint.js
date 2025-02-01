@@ -22,7 +22,7 @@ const bigInt = require("big-integer");
 
 let wBigInt;
 
-if (typeof(BigInt) != "undefined") {
+
     wBigInt  = BigInt;
     wBigInt.one = wBigInt(1);
     wBigInt.zero = wBigInt(0);
@@ -231,139 +231,7 @@ if (typeof(BigInt) != "undefined") {
     };
 
 
-} else {
 
-    var oldProto = bigInt.prototype;
-    wBigInt = function(a) {
-        if ((typeof a == "string") && (a.slice(0,2) == "0x")) {
-            return bigInt(a.slice(2), 16);
-        } else {
-            return bigInt(a);
-        }
-    };
-    wBigInt.one = bigInt.one;
-    wBigInt.zero = bigInt.zero;
-    wBigInt.prototype = oldProto;
-
-    wBigInt.prototype.div = function(c) {
-        return this.divide(c);
-    };
-
-    // Affine
-    wBigInt.genAffine = (q) => {
-        const nq = wBigInt.zero.minus(q);
-        return (a) => {
-            let aux = a;
-            if (aux.isNegative()) {
-                if (aux.lesserOrEquals(nq)) {
-                    aux = aux.mod(q);
-                }
-                if (aux.isNegative()) {
-                    aux = aux.add(q);
-                }
-            } else {
-                if (aux.greaterOrEquals(q)) {
-                    aux = aux.mod(q);
-                }
-            }
-            return aux;
-        };
-    };
-
-
-    // Inverse
-    wBigInt.genInverse = (q) => {
-        return (a) => a.affine(q).modInv(q);
-    };
-
-    // Add
-    wBigInt.genAdd = (q) => {
-        if (q) {
-            return (a,b) => {
-                const r = a.add(b);
-                return r.greaterOrEquals(q) ? r.minus(q) : r;
-            };
-        } else {
-            return (a,b) => a.add(b);
-        }
-    };
-
-    // Sub
-    wBigInt.genSub = (q) => {
-        if (q) {
-            return (a,b) => a.greaterOrEquals(b) ? a.minus(b) : a.minus(b).add(q);
-        } else {
-            return (a,b) => a.minus(b);
-        }
-    };
-
-    wBigInt.genNeg = (q) => {
-        if (q) {
-            return (a) => a.isZero() ? a : q.minus(a);
-        } else {
-            return (a) => wBigInt.zero.minus(a);
-        }
-    };
-
-    // Mul
-    wBigInt.genMul = (q) => {
-        if (q) {
-            return (a,b) => a.times(b).mod(q);
-        } else {
-            return (a,b) => a.times(b);
-        }
-    };
-
-    // Shr
-    wBigInt.genShr = () => {
-        return (a,b) => a.shiftRight(wBigInt(b).value);
-    };
-
-    // Shr
-    wBigInt.genShl = (q) => {
-        if (q) {
-            return (a,b) => a.shiftLeft(wBigInt(b).value).mod(q);
-        } else {
-            return (a,b) => a.shiftLeft(wBigInt(b).value);
-        }
-    };
-
-    // Square
-    wBigInt.genSquare = (q) => {
-        if (q) {
-            return (a) => a.square().mod(q);
-        } else {
-            return (a) => a.square();
-        }
-    };
-
-    // Double
-    wBigInt.genDouble = (q) => {
-        if (q) {
-            return (a) => a.add(a).mod(q);
-        } else {
-            return (a) => a.add(a);
-        }
-    };
-
-    // Equals
-    wBigInt.genEquals = (q) => {
-        if (q) {
-            return (a,b) => a.affine(q).equals(b.affine(q));
-        } else {
-            return (a,b) => a.equals(b);
-        }
-    };
-
-    // IsZero
-    wBigInt.genIsZero = (q) => {
-        if (q) {
-            return (a) => (a.affine(q).isZero());
-        } else {
-            return (a) =>  a.isZero();
-        }
-    };
-}
 
 
 
