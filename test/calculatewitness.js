@@ -17,15 +17,14 @@
     zksnark JavaScript library. If not, see <https://www.gnu.org/licenses/>.
 */
 
-const chai = require("chai");
-const fs = require("fs");
-const path = require("path");
-
-const Circuit = require("../src/circuit.js");
-const BN128 = require("../src/bn128.js");
-const F1Field = require("../src/zqfield.js");
-
-const assert = chai.assert;
+import { describe, it } from 'micro-should';
+import { deepStrictEqual } from 'node:assert';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import Circuit from '../src/circuit.js';
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 
 describe("Calculate witness", () => {
@@ -35,6 +34,7 @@ describe("Calculate witness", () => {
         const cir = new Circuit(cirDef);
         const witness = cir.calculateWitness({"a": "33", "b": "34"});
 
-        assert.equal(witness[cir.getSignalIdx("main.out")].toString(), "67");
+        deepStrictEqual(witness[cir.getSignalIdx("main.out")].toString(), "67");
     });
 });
+it.runWhen(import.meta.url);

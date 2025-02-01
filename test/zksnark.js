@@ -17,26 +17,25 @@
     zksnark JavaScript library. If not, see <https://www.gnu.org/licenses/>.
 */
 
-const chai = require("chai");
-const fs = require("fs");
-const path = require("path");
-const bigInt = require("../src/bigint.js");
-
-const Circuit = require("../src/circuit.js");
-const zkSnark = require("../index.js").original;
-const BN128 = require("../src/bn128.js");
-const PolField = require("../src/polfield.js");
-const ZqField = require("../src/zqfield.js");
-
-const {stringifyBigInts, unstringifyBigInts} = require("../src/stringifybigint.js");
+import { describe, it } from 'micro-should';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { original as zkSnark } from '../index.js';
+import bigInt from '../src/bigint.js';
+import BN128 from '../src/bn128.js';
+import Circuit from '../src/circuit.js';
+import PolField from '../src/polfield.js';
+import { stringifyBigInts } from '../src/stringifybigint.js';
+import ZqField from '../src/zqfield.js';
+import { assert } from './test_utils.js';
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const bn128 = new BN128();
 const PolF = new PolField(new ZqField(bn128.r));
 const G1 = bn128.G1;
 const G2 = bn128.G2;
-
-const assert = chai.assert;
-
 
 describe("zkSnark original", () => {
     it("Load a circuit, create trusted setup, create a proof and validate it", () => {
@@ -163,7 +162,7 @@ describe("zkSnark original", () => {
 //        assert(G1.equals(gA, proof.pi_a));
 */
         assert( zkSnark.isValid(setup.vk_verifier, proof, publicSignals));
-    }).timeout(10000000);
+    });
 /*
     it("validate sha256_2", () => {
 
@@ -194,3 +193,4 @@ describe("zkSnark original", () => {
 */
 
 });
+it.runWhen(import.meta.url);
