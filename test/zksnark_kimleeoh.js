@@ -17,14 +17,15 @@
     zksnark JavaScript library. If not, see <https://www.gnu.org/licenses/>.
 */
 
-const chai = require("chai");
-const fs = require("fs");
-const path = require("path");
-
-const Circuit = require("../src/circuit.js");
-const zkSnark = require("../index.js").kimleeoh;
-
-const assert = chai.assert;
+import { describe, it } from 'micro-should';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { kimleeoh as zkSnark } from '../index.js';
+import Circuit from '../src/circuit.js';
+import { assert } from './test_utils.js';
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 describe("zkSnark KimLeeOh", () => {
     it("Load a circuit, create trusted setup, create a proof and validate it", () => {
@@ -40,5 +41,6 @@ describe("zkSnark KimLeeOh", () => {
         const {proof, publicSignals} = zkSnark.genProof(setup.vk_proof, witness);
 
         assert( zkSnark.isValid(setup.vk_verifier, proof, publicSignals));
-    }).timeout(10000000);
+    });
 });
+it.runWhen(import.meta.url);

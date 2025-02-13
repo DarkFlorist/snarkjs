@@ -21,7 +21,8 @@
 
 
 const BN128 = require("./bn128.js");
-const createKeccakHash = require("keccak");
+const { keccak_256 } = require('@noble/hashes/sha3');
+const { concatBytes } = require('@noble/hashes/utils');
 const bigInt = require("./bigint");
 
 const bn128 = new BN128();
@@ -35,17 +36,17 @@ module.exports = function isValid(vk_verifier, proof, publicSignals) {
         cpub  = G1.add( cpub, G1.mulScalar( vk_verifier.IC[s+1], publicSignals[s]));
     }
 
-    const buff = Buffer.concat([
+    const buff = concatBytes(
         proof.pi_a[0].beInt2Buff(32),
         proof.pi_a[1].beInt2Buff(32),
         proof.pi_b[0][0].beInt2Buff(32),
         proof.pi_b[0][1].beInt2Buff(32),
         proof.pi_b[1][0].beInt2Buff(32),
         proof.pi_b[1][1].beInt2Buff(32)
-    ]);
+    );
 
-    const h1buff = createKeccakHash("keccak256").update(buff).digest();
-    const h2buff = createKeccakHash("keccak256").update(h1buff).digest();
+    const h1buff = keccak_256(buff);
+    const h2buff = keccak_256(h1buff);
 
     const h1 = bigInt.beBuff2int(h1buff);
     const h2 = bigInt.beBuff2int(h2buff);
@@ -54,8 +55,8 @@ module.exports = function isValid(vk_verifier, proof, publicSignals) {
 //    const h1 = bigInt.zero;
 //    const h2 = bigInt.zero;
 
-    console.log(h1.toString());
-    console.log(h2.toString());
+    //console.log(h1.toString());
+    //console.log(h2.toString());
 
 
     if (! bn128.F12.equals(

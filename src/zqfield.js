@@ -19,21 +19,10 @@
 
 const bigInt = require("./bigint");
 const fUtils = require("./futils.js");
+const { randomBytes } = require("@noble/hashes/utils");
 
-function getRandomByte() {
-    if (typeof window !== "undefined") { // Browser
-        if (typeof window.crypto !== "undefined") { // Supported
-            let array = new Uint8Array(1);
-            window.crypto.getRandomValues(array);
-            return array[0];
-        }
-        else { // fallback
-            return Math.floor(Math.random() * 256);
-        }
-    }
-    else { // NodeJS
-        return module.require("crypto").randomBytes(1)[0];
-    }
+function randomByte() {
+    return randomBytes(1)[0];
 }
 
 class ZqField {
@@ -99,7 +88,7 @@ class ZqField {
         let res = bigInt(0);
         let n = bigInt(this.q);
         while (!n.isZero()) {
-            res = res.shl(8).add(bigInt(getRandomByte()));
+            res = res.shl(8).add(bigInt(randomByte()));
             n = n.shr(8);
         }
         return res;
@@ -146,6 +135,5 @@ class ZqField {
     }
 
 }
-
 
 module.exports = ZqField;

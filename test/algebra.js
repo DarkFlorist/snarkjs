@@ -17,13 +17,11 @@
     zksnark JavaScript library. If not, see <https://www.gnu.org/licenses/>.
 */
 
-const chai = require("chai");
-
-const bigInt = require("../src/bigint.js");
-const BN128 = require("../src/bn128.js");
-const F1Field = require("../src/zqfield.js");
-
-const assert = chai.assert;
+import { describe, it } from 'micro-should';
+import bigInt from '../src/bigint.js';
+import BN128 from '../src/bn128.js';
+import F1Field from '../src/zqfield.js';
+import { assert } from './test_utils.js';
 
 
 describe("F1 testing", () => {
@@ -250,5 +248,6 @@ describe("Pairing", () => {
 
             assert(bn128.F12.equals(res, bn128.F12.one)); */
         }
-    }).timeout(10000);
+    });
 });
+it.runWhen(import.meta.url);
